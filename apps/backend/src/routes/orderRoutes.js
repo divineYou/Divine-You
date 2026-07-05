@@ -8,8 +8,13 @@ const {
     updateOrderStatus,
     updateCourier,
     getCourierOrders,
-    updateShipmentDetails
+    updateShipmentDetails,
+    createRazorpayOrder,
+    verifyPayment
 } = require("../controllers/orderController");
+
+router.post("/create-order", createRazorpayOrder);
+router.post("/verify-payment", verifyPayment);
 
 const {
     verifyToken,

@@ -2155,31 +2155,79 @@ function proceedToPayment() {
 
 // Complete checkout with manual payment
 async function completeCheckout() {
-
     try {
+        const orderResponse = await fetch(
+            "https://divine-you.onrender.com/api/orders/create-order",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    amount: checkoutState.grandTotal
+                })
+            }
+        );
+
+        const orderData = await orderResponse.json();
+
+        if (!orderResponse.ok) {
+            throw new Error(
+                orderData.message ||
+                "Failed to create Razorpay order"
+            );
+        }
 
         return new Promise((resolve, reject) => {
-
             const options = {
-
                 key: "rzp_test_So7H4qKiXQch5g",
 
-                amount: checkoutState.grandTotal * 100,
+                amount: orderData.amount,
 
-                currency: "INR",
+                currency: orderData.currency,
+
+                order_id: orderData.order_id,
 
                 name: "Divine You",
 
                 description: "Order Payment",
 
                 handler: async function (response) {
-
                     try {
+                        const verifyResponse = await fetch(
+                            "https://divine-you.onrender.com/api/orders/verify-payment",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    razorpay_order_id:
+                                        response.razorpay_order_id,
+
+                                    razorpay_payment_id:
+                                        response.razorpay_payment_id,
+
+                                    razorpay_signature:
+                                        response.razorpay_signature
+                                })
+                            }
+                        );
+
+                        const verifyData =
+                            await verifyResponse.json();
+
+                        if (!verifyResponse.ok) {
+                            throw new Error(
+                                verifyData.message ||
+                                "Payment verification failed"
+                            );
+                        }
 
                         const backendOrderPayload = {
-
                             customer: {
-
                                 name:
                                     currentUser.firstName ||
                                     currentUser.first_name ||
@@ -2213,45 +2261,56 @@ ${checkoutState.address?.postal_code || ""}
                             order_status: "pending",
 
                             razorpay_payment_id:
-                                response.razorpay_payment_id
+                                response.razorpay_payment_id,
+
+                            razorpay_order_id:
+                                response.razorpay_order_id,
+
+                            razorpay_signature:
+                                response.razorpay_signature
                         };
 
                         const token =
-localStorage.getItem(
-    "divineYouAuthToken"
-);
+                            localStorage.getItem(
+                                "divineYouAuthToken"
+                            );
 
-const backendResponse =
-await fetch(
-    "https://divine-you.onrender.com/api/orders",
-    {
-        method: "POST",
+                        const backendResponse =
+                            await fetch(
+                                "https://divine-you.onrender.com/api/orders",
+                                {
+                                    method: "POST",
 
-        headers: {
-            "Content-Type":
-            "application/json",
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json",
 
-            "Authorization":
-            `Bearer ${token}`
-        },
+                                        "Authorization":
+                                            `Bearer ${token}`
+                                    },
 
-        body: JSON.stringify(
-            backendOrderPayload
-        )
-    }
-);
+                                    body: JSON.stringify(
+                                        backendOrderPayload
+                                    )
+                                }
+                            );
 
                         const backendData =
                             await backendResponse.json();
 
                         if (!backendResponse.ok) {
-
                             throw new Error(
                                 backendData.message ||
                                 "Failed to save order"
                             );
                         }
 
+                        if (!backendData.success) {
+                            throw new Error(
+                                backendData.message ||
+                                "Order creation failed"
+                            );
+                        }
 
                         // CLEAR CART
 
@@ -2266,25 +2325,27 @@ await fetch(
                         // IMPORTANT RETURN
 
                         resolve({
-    order: backendData.order || backendData,
-    paymentId:
-        response.razorpay_payment_id,
+                            order:
+                                backendData.order || backendData,
 
-    totalAmount:
-        checkoutState.grandTotal
-});
+                            paymentId:
+                                response.razorpay_payment_id,
+
+                            orderId:
+                                response.razorpay_order_id,
+
+                            totalAmount:
+                                checkoutState.grandTotal
+                        });
 
                         // REDIRECT
 
                         setTimeout(() => {
-
                             window.location.href =
                                 "./orderHistory.html";
-
                         }, 1000);
 
                     } catch (err) {
-
                         console.error(
                             "Payment handler error:",
                             err
@@ -2295,7 +2356,6 @@ await fetch(
                 },
 
                 prefill: {
-
                     name:
                         currentUser?.first_name ||
                         currentUser?.firstName ||
@@ -2313,9 +2373,7 @@ await fetch(
                 },
 
                 modal: {
-
                     ondismiss: function () {
-
                         reject(
                             new Error(
                                 "Payment popup closed by user"
@@ -2327,18 +2385,31 @@ await fetch(
 
             const rzp = new Razorpay(options);
 
+            rzp.on("payment.failed", function (response) {
+                console.error(
+                    "Payment Failed:",
+                    response.error
+                );
+
+                reject(
+                    new Error(
+                        response.error.description ||
+                        "Payment failed"
+                    )
+                );
+            });
+
             rzp.open();
         });
 
     } catch (error) {
-
         console.error(
             "Razorpay Error:",
             error
         );
 
         showNotification(
-            "Payment failed",
+            error.message || "Payment failed",
             "error"
         );
 
@@ -2607,4 +2678,5 @@ globalThis.proceedToPayment = proceedToPayment;
 // Export order success modal functions for onclick handlers
 globalThis.closeOrderSuccessModal = closeOrderSuccessModal;
 globalThis.continueShopping = continueShopping;
-globalThis.handleAccount =handleAccount;
+globalThis.handleAccount = handleAccount;
+
