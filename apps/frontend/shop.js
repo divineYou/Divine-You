@@ -2180,12 +2180,8 @@ async function completeCheckout() {
 
         return new Promise((resolve, reject) => {
             const options = {
-<<<<<<< HEAD
-                key: "rzp_test_So7H4qKiXQch5g",
-=======
 
                 key: "rzp_test_T9lJEJUSnCkrJv",
->>>>>>> 96fa540de3edb498c127be372fbeeeb5c3550c5a
 
                 amount: orderData.amount,
 
@@ -2683,9 +2679,4 @@ globalThis.proceedToPayment = proceedToPayment;
 // Export order success modal functions for onclick handlers
 globalThis.closeOrderSuccessModal = closeOrderSuccessModal;
 globalThis.continueShopping = continueShopping;
-<<<<<<< HEAD
-globalThis.handleAccount = handleAccount;
-
-=======
 globalThis.handleAccount =handleAccount;
->>>>>>> 96fa540de3edb498c127be372fbeeeb5c3550c5a
