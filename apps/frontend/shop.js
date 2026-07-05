@@ -2162,7 +2162,7 @@ async function completeCheckout() {
 
             const options = {
 
-                key: "rzp_test_So7H4qKiXQch5g",
+                key: "rzp_test_T9lJEJUSnCkrJv",
 
                 amount: checkoutState.grandTotal * 100,
 
