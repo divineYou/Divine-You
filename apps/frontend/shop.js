@@ -2406,15 +2406,12 @@ async function completeCheckout() {
     console.error("========== RAZORPAY ERROR ==========");
     console.error(error);
 
-    return res.status(500).json({
-        success: false,
-        message: error.message,
-        description: error.error?.description,
-        reason: error.error?.reason,
-        source: error.error?.source,
-        step: error.error?.step
-    });
+    showNotification(
+        error.message || "Payment failed",
+        "error"
+    );
 
+    throw error;
 
         showNotification(
             error.message || "Payment failed",

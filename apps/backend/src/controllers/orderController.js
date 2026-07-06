@@ -43,18 +43,18 @@ const createRazorpayOrder = async (req, res) => {
 
     } catch (error) {
 
-        console.error("========== RAZORPAY ERROR ==========");
-        console.error(error);
+    console.error("========== RAZORPAY ERROR ==========");
+    console.error(error);
 
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-            description: error.error?.description,
-            reason: error.error?.reason,
-            source: error.error?.source,
-            step: error.error?.step
-        });
-    }
+    return res.status(500).json({
+        success: false,
+        message: error.message,
+        description: error.error?.description,
+        reason: error.error?.reason,
+        source: error.error?.source,
+        step: error.error?.step
+    });
+}
 };
 const verifyPayment = async (req, res) => {
 
