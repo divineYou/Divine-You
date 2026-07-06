@@ -2168,14 +2168,14 @@ async function completeCheckout() {
                 })
             }
         );    
-        const orderData = await orderResponse.json();
+       const responseJson = await orderResponse.json();
 
-        console.log("Create Order Response:", orderData);
+console.log("Create Order Response:", responseJson);
 
 
         if (!orderResponse.ok) {
             throw new Error(
-                orderData.message ||
+                responseJson.message ||
                 "Failed to create Razorpay order"
             );
         }
@@ -2185,11 +2185,11 @@ async function completeCheckout() {
 
                 key: "rzp_test_TA7GqHLqJgG3OB",
 
-                amount: orderData.amount,
+                amount: responseJson.amount,
 
-                currency: orderData.currency,
+                currency: responseJson.currency,
 
-                order_id: orderData.order_id,
+                order_id: responseJson.order_id,
 
                 name: "Divine You",
 
