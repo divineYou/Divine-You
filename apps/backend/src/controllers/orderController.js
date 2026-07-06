@@ -13,6 +13,15 @@ const createRazorpayOrder = async (req, res) => {
 
         const { amount } = req.body;
 
+        
+        console.log("Amount received:", amount);
+console.log("Key ID:", process.env.RAZORPAY_KEY_ID);
+const order = await razorpay.orders.create(options);
+
+console.log(order);
+
+
+
         if (!amount || amount < 1) {
             return res.status(400).json({
                 success: false,

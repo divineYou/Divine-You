@@ -2181,7 +2181,7 @@ async function completeCheckout() {
         return new Promise((resolve, reject) => {
             const options = {
 
-                key: "rzp_test_T9lJEJUSnCkrJv",
+                key: "rzp_test_T9mAwbNBL0r9GH",
 
                 amount: orderData.amount,
 
@@ -2242,11 +2242,11 @@ async function completeCheckout() {
                                     checkoutState.address?.phone || "",
 
                                 address: `
-${checkoutState.address?.address_1 || ""}
-${checkoutState.address?.city || ""}
-${checkoutState.address?.province || ""}
-${checkoutState.address?.postal_code || ""}
-`.trim()
+                                    ${checkoutState.address?.address_1 || ""} 
+                                    ${checkoutState.address?.city || ""}
+                                    ${checkoutState.address?.province || ""}
+                                    ${checkoutState.address?.postal_code || ""}
+                                `.trim()
                             },
 
                             items: checkoutState.items,
@@ -2312,9 +2312,7 @@ ${checkoutState.address?.postal_code || ""}
                                 "Order creation failed"
                             );
                         }
-
                         // CLEAR CART
-
                         cart = [];
 
                         updateCartUI();
@@ -2404,10 +2402,19 @@ ${checkoutState.address?.postal_code || ""}
         });
 
     } catch (error) {
-        console.error(
-            "Razorpay Error:",
-            error
-        );
+
+    console.error("========== RAZORPAY ERROR ==========");
+    console.error(error);
+
+    return res.status(500).json({
+        success: false,
+        message: error.message,
+        description: error.error?.description,
+        reason: error.error?.reason,
+        source: error.error?.source,
+        step: error.error?.step
+    });
+
 
         showNotification(
             error.message || "Payment failed",
