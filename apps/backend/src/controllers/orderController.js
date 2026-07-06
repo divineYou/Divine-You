@@ -47,13 +47,10 @@ const createRazorpayOrder = async (req, res) => {
     console.error(error);
 
     return res.status(500).json({
-        success: false,
-        message: error.message,
-        description: error.error?.description,
-        reason: error.error?.reason,
-        source: error.error?.source,
-        step: error.error?.step
-    });
+    success: false,
+    message: error.message,
+    error: error
+});
 }
 };
 const verifyPayment = async (req, res) => {

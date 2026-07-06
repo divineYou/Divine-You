@@ -2168,6 +2168,8 @@ async function completeCheckout() {
                 })
             }
         );
+        
+        console.log("Create Order Response:", orderData);
 
         const orderData = await orderResponse.json();
 
@@ -2401,7 +2403,7 @@ async function completeCheckout() {
             rzp.open();
         });
 
-    } catch (error) {
+    }catch (error) {
 
     console.error("========== RAZORPAY ERROR ==========");
     console.error(error);
@@ -2412,14 +2414,7 @@ async function completeCheckout() {
     );
 
     throw error;
-
-        showNotification(
-            error.message || "Payment failed",
-            "error"
-        );
-
-        throw error;
-    }
+}
 }
 
 // Handle successful order creation
