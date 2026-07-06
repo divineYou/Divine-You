@@ -2167,11 +2167,11 @@ async function completeCheckout() {
                     amount: checkoutState.grandTotal
                 })
             }
-        );
-        
+        );    
+        const orderData = await orderResponse.json();
+
         console.log("Create Order Response:", orderData);
 
-        const orderData = await orderResponse.json();
 
         if (!orderResponse.ok) {
             throw new Error(
@@ -2183,7 +2183,7 @@ async function completeCheckout() {
         return new Promise((resolve, reject) => {
             const options = {
 
-                key: "rzp_test_T9mAwbNBL0r9GH",
+                key: "rzp_test_TA7GqHLqJgG3OB",
 
                 amount: orderData.amount,
 
