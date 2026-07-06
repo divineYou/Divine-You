@@ -7,20 +7,13 @@ const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
-
 const createRazorpayOrder = async (req, res) => {
     try {
 
         const { amount } = req.body;
 
-        
         console.log("Amount received:", amount);
-console.log("Key ID:", process.env.RAZORPAY_KEY_ID);
-const order = await razorpay.orders.create(options);
-
-console.log(order);
-
-
+        console.log("Key ID:", process.env.RAZORPAY_KEY_ID);
 
         if (!amount || amount < 1) {
             return res.status(400).json({
@@ -30,12 +23,16 @@ console.log(order);
         }
 
         const options = {
-            amount: Math.round(amount * 100), // ₹ -> paise
+            amount: Math.round(amount * 100),
             currency: "INR",
             receipt: `receipt_${Date.now()}`
         };
 
+        console.log("Options:", options);
+
         const order = await razorpay.orders.create(options);
+
+        console.log("Razorpay Order:", order);
 
         return res.json({
             success: true,
@@ -45,13 +42,19 @@ console.log(order);
         });
 
     } catch (error) {
-        console.error("RAZORPAY ORDER ERROR:", error);
+
+        console.error("========== RAZORPAY ERROR ==========");
+        console.error(error);
+
         return res.status(500).json({
-        success: false,
-        message: error.message,
-        error: error
-    });
-}
+            success: false,
+            message: error.message,
+            description: error.error?.description,
+            reason: error.error?.reason,
+            source: error.error?.source,
+            step: error.error?.step
+        });
+    }
 };
 const verifyPayment = async (req, res) => {
 
