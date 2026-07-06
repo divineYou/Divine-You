@@ -36,14 +36,13 @@ const createRazorpayOrder = async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("RAZORPAY ORDER ERROR:", error);
-
         return res.status(500).json({
-            success: false,
-            message: "Failed to create Razorpay order"
-        });
-    }
+        success: false,
+        message: error.message,
+        error: error
+    });
+}
 };
 const verifyPayment = async (req, res) => {
 
