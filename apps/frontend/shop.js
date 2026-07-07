@@ -2183,7 +2183,7 @@ console.log("Create Order Response:", responseJson);
         return new Promise((resolve, reject) => {
             const options = {
 
-                key: "rzp_test_TA7GqHLqJgG3OB",
+                key: "rzp_live_TAeFWjcQfJVBDr",
 
                 amount: responseJson.amount,
 
